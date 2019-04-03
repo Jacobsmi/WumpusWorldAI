@@ -13,6 +13,9 @@ public class Agent {
      * 2 = Maybe
      * 3 = Yes
      */
+    /*
+
+     */
     
     public Agent(World w){
         world = w;
@@ -33,22 +36,22 @@ public class Agent {
                 getPerceptions(r,c);
             }
         }
-        for(int i = 0; i < hasWumpus.length-1; i++ ) {
-            for(int j = 0; i < hasWumpus.length-1; j++){
+        for(int i = 0; i < hasWumpus.length; i++ ) {
+            for(int j = 0; j < hasWumpus.length; j++){
                 if(hasWumpus[i][j]==3){
                     fullboard[i][j] = 3;
                 }
             }
         }
         for(int i = 0; i < hasPit.length; i++ ) {
-            for(int j = 0; i < hasPit.length-1; j++){
+            for(int j = 0; j < hasPit.length; j++){
                 if(hasPit[i][j]==3){
                     fullboard[i][j] = 9;
                 }
             }
         }
         for(int i = 0; i < hasGold.length; i++ ) {
-            for(int j = 0; i < hasGold.length; j++){
+            for(int j = 0; j < hasGold.length; j++){
                 if(hasGold[i][j]==3){
                     fullboard[i][j] = 8;
                 }
