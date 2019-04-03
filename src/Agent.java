@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Agent {
@@ -12,12 +13,16 @@ public class Agent {
      * 1 = Not visited
      * 2 = Maybe
      * 3 = Yes
-     */
-    /*
-
+     * For final board:
+     * 8= Gold
+     * 9= Pit
+     * 3= Wumpus
      */
     
     public Agent(World w){
+        Tree tree = new Tree();
+        Node start = new Node(0,0,null);
+        tree.root = start;
         world = w;
         for(Integer[] row : hasWumpus){
             Arrays.fill(row, 1);
@@ -61,8 +66,22 @@ public class Agent {
         for (Integer[] row : fullboard){
             System.out.println(Arrays.toString(row));
         }
-        //getPerceptions(0, 0);
-        //System.out.println("Statuses of " + hasPit[0][1] + " " + hasPit[1][0]);
+        ArrayList<Node> current = new ArrayList<>();
+        ArrayList<Node> next = new ArrayList<>();
+        current.add(tree.root);
+        boolean spotHasGold = false;
+        spotHasGold = pathing(fullboard, tree.root);
+        while(!spotHasGold) {
+            for (int i = 0; i < current.size() - 1; i++) {
+                for (Node child : current.get(i).children) {
+                    spotHasGold = pathing(fullboard, child);
+                    next.add(child);
+                }
+            }
+            current = next;
+            next.clear();
+        }
+
     }
     public void getPerceptions(int x, int y){
         boolean[] perceptions = world.perceive(x,y);
@@ -108,6 +127,73 @@ public class Agent {
                     percept[x][y+1] = 3;
             }
         }
+    }
+    public Boolean pathing(Integer[][] board, Node node){
+        boolean hasGold = false;
+        if(node.posX > 0){
+            Node left = new Node((node.posX -1), node.posY, node);
+            int here= board[node.posX-1][node.posY];
+            left.eval--;
+            if(here==9){
+                left.eval -=1000;
+            }
+            if(here == 8){
+                left.eval +=1000;
+                hasGold = true;
+            }
+            if(here != 3){
+                node.children.add(left);
+            }
+        }
+
+        if(node.posY > 0){
+            Node down = new Node(node.posX, (node.posY-1), node);
+            int here= board[node.posX][node.posY-1];
+            down.eval--;
+            if(here==9){
+                down.eval -=1000;
+            }
+            if(here == 8){
+                down.eval +=1000;
+                hasGold = true;
+            }
+            if(here != 3){
+                node.children.add(down);
+            }
+        }
+
+        if(node.posX < 3){
+            Node right = new Node((node.posX+1), node.posY, node);
+            int here= board[node.posX+1][node.posY];
+            right.eval--;
+            if(here==9){
+                right.eval -=1000;
+            }
+            if(here == 8){
+                right.eval +=1000;
+                hasGold = true;
+            }
+            if(here != 3){
+                node.children.add(right);
+            }
+        }
+
+        if(node.posY < 3 ){
+            Node up = new Node(node.posX, (node.posY+1), node);
+            int here= board[node.posX][node.posY+1];
+            up.eval--;
+            if(here==9){
+                up.eval -=1000;
+            }
+            if(here == 8){
+                up.eval +=1000;
+                hasGold = true;
+            }
+            if(here != 3){
+                node.children.add(up);
+            }
+        }
+        return hasGold;
     }
 
 }
